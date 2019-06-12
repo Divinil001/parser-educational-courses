@@ -1,22 +1,24 @@
 import scrapy
-#from urllib.parse import urljoin
+from urllib.parse import urljoin
 from scrapy.utils.markup import remove_tags
+
+CATALONIA_URL = 'https://www.fib.upc.edu'
 
 class CataloniaSpider(scrapy.Spider):
     name = "catalonia"
     start_urls = [
-        'https://www.fib.upc.edu/en/mobility/incoming/how-apply',
+        urljoin(CATALONIA_URL, '/en/mobility/incoming/how-apply'),
     ]
 
     def get_courses(self, ul , next , links, semester):
 
-        # разделители
+        # разделители для удаления невалидной информации из строк
         d1 = "'s degree in"
         d2 = '-'
         d3 = ' '
         d4 = 'Exchange period ('
 
-        semester =  remove_tags(semester.extract()).split(d4)
+        semester =  remove_tags(semester.extract()).replace(d4, '').strip(')')
         #e = semester.sub(d4,'',semester)
         courses = []
 
@@ -40,9 +42,9 @@ class CataloniaSpider(scrapy.Spider):
                 'semester': semester, # 5. Course_semester - string
                 'credits_num' : credits_num.strip(), # 6.Course_credits - integer
                 'credits_type' : credits_type.strip(),# 7. Course_credits_type
-                'links' : links[i], #8. Course_link_descrip - string
+                'links' : urljoin(CATALONIA_URL, links[i]), #8. Course_link_descrip - string
             })
-            i = i+1
+            i+=1
 
         return courses
 
@@ -56,8 +58,10 @@ class CataloniaSpider(scrapy.Spider):
 
         courses = self.get_courses(ul , next , links, semester)
         print(courses)
+        
         #print(links)
-
         #print([remove_tags(x) for x in semester.getall()])
-
         #print(urls.getall()
+
+class Spider(scrapy.Spider):
+    name = "catalonia"
