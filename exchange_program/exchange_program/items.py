@@ -9,6 +9,9 @@ import scrapy
 
 
 class ExchangeProgramItem(scrapy.Item):
-    # define the fields for your item here like:
-    # name = scrapy.Field()
+    university_title = scrapy.Field()
+    course_title = scrapy.Field()
+    semester = scrapy.Field()
+    course_credits = scrapy.Field()
+    credits_type = scrapy.Field()
     pass
