@@ -1,11 +1,22 @@
-# -*- coding: utf-8 -*-
+import csv
 
-# Define your item pipelines here
-#
-# Don't forget to add your pipeline to the ITEM_PIPELINES setting
-# See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
+class CataloniaPipeline(object):
 
+    def open_spider(self, spider):
+        pass
 
-class ExchangeProgramPipeline(object):
+    def close_spider(self, spider):
+        for course in spider.courses:
+            try:
+                course['credits'] = spider.credits[course['link']]
+            except:
+                pass
+        with open('dataset.csv', 'w') as file:
+            fieldnames = ['university_title' , 'id', 'name','course_level', 'semester', 'credits' , 'credits_type', 'link' ]
+            writer = csv.DictWriter(file, fieldnames=fieldnames)
+            writer.writeheader()
+            for course in spider.courses:
+                writer.writerow(course)
+
     def process_item(self, item, spider):
         return item
