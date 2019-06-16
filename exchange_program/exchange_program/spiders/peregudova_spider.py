@@ -14,11 +14,12 @@ class CataloniaSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.credits = {}
+        self.course_credits = {}
         self.courses = []
 
     def parse_credits(self , response):
-        self.credits[response.request.url] = response.css('.col-xs-9.col-md-9 ::text').get().strip()
+        #6. Course_credits - integer / dictionary of key (level) and value (credit)
+        self.course_credits[response.request.url] = response.css('.col-xs-9.col-md-9 ::text').get().strip()
 
     def parse(self, response):
         present_link = response.request.url
@@ -28,29 +29,29 @@ class CataloniaSpider(scrapy.Spider):
         course_level = re.sub(r" in ",", ",remove_tags(course_level))
         table = response.css('.field-item.even tbody') # for parse 2,3,4,5,8
 
-        university_title = "Universitat Politechnica de Catalunya Barcelonatech.FIB Facultat d'Informatica de Barcelona."
-        credits_type = "ECTS" # because in throughout Spain credits type is ECTS
+        university_title_full = "Universitat Politechnica de Catalunya Barcelonatech.FIB Facultat d'Informatica de Barcelona."
+        course_credits_type = "ECTS" # because in throughout Spain credits type is ECTS
 
         lines = table.css('tr')
         for line in lines:
-            id = line.css('.acronym ::text').get()  # 2. Course_local_id - string
-            name = line.css('.name ::text').get() # 3. Course_title_full - string
-            link = urljoin(present_link , line.css('.name a::attr(href)').get()) #8. Course_link_descrip - string
-            yield response.follow(link, self.parse_credits)
-            semester = line.css('.curs_obert ::text').get() # 5. Course_semester - string
-            if semester == "Q1, Q2":
-                semester = "Spring, Fall"
-            elif semester == "Q2":
-                semester = "Spring"
-            elif semester == "Q1":
-                semester = "Fall"
+            course_local_id = line.css('.acronym ::text').get()  # 2. Course_local_id - string
+            course_title_full = line.css('.name ::text').get() # 3. Course_title_full - string
+            course_link_descrip = urljoin(present_link , line.css('.name a::attr(href)').get()) #8. Course_link_descrip - string
+            yield response.follow(course_link_descrip, self.parse_credits)
+            course_semester = line.css('.curs_obert ::text').get() # 5. Course_semester - string
+            if course_semester == "Q1, Q2":
+                course_semester = "Spring, Fall"
+            elif course_semester == "Q2":
+                course_semester = "Spring"
+            elif course_semester == "Q1":
+                course_semester = "Fall"
 
             self.courses.append({
-                'university_title' : university_title, # 1. University_title_full - string
-                'id': id.strip(), # 2. Course_local_id - string
-                'name': name.strip(), # 3. Course_title_full - string
+                'university_title_full' : university_title_full, # 1. University_title_full - string
+                'course_local_id': course_local_id.strip(), # 2. Course_local_id - string
+                'course_title_full': course_title_full.strip(), # 3. Course_title_full - string
                 'course_level': course_level.strip(), # 4. Course_level - string
-                'semester': semester, # 5. Course_semester - string
-                'credits_type' : credits_type,# 7. Course_credits_type
-                'link' : link, #8. Course_link_descrip - string
+                'course_semester': course_semester, # 5. Course_semester - string
+                'course_credits_type' : course_credits_type,# 7. Course_credits_type
+                'course_link_descrip' : course_link_descrip, #8. Course_link_descrip - string
             })
