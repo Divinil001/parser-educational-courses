@@ -1,4 +1,4 @@
-import csv
+import json
 
 class CataloniaPipeline(object):
 
@@ -8,15 +8,13 @@ class CataloniaPipeline(object):
     def close_spider(self, spider):
         for course in spider.courses:
             try:
-                course['credits'] = spider.credits[course['link']]
+                #combine results to one set
+                course['course_credits'] = spider.course_credits[course['course_link_descrip']]
             except:
                 pass
-        with open('dataset.csv', 'w') as file:
-            fieldnames = ['university_title' , 'id', 'name','course_level', 'semester', 'credits' , 'credits_type', 'link' ]
-            writer = csv.DictWriter(file, fieldnames=fieldnames)
-            writer.writeheader()
-            for course in spider.courses:
-                writer.writerow(course)
+
+        with open('dataset.json', 'w') as file: # save data to file
+            json.dump(spider.courses, file)
 
     def process_item(self, item, spider):
         return item
