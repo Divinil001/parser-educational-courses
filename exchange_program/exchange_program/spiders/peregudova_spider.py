@@ -26,18 +26,10 @@ class CataloniaSpider(scrapy.Spider):
         present_link = response.request.url
         course_level = response.css('.breadcrumb')  # for  4. Course_level - string
         course_level = course_level.css('a')[3]
-<<<<<<< HEAD
-
+        
         course_level , course_track = remove_tags(course_level.extract()).split(' in ', maxsplit=1)
         course_level = re.sub(r"Degree"," ",remove_tags(course_level))
-
         table = response.css('.field-item.even tbody')  # for parse 2,3,4,5,8
-=======
-        course_level = re.sub(r" Degree in ", ", ", remove_tags(course_level.extract()))
-        course_level = re.sub(r" in ", ", ", remove_tags(course_level))
-        table = response.css('.field-item.even tbody')  # for parse 2,3,4,5,8
-
->>>>>>> 1517fcca455d0ce84c5f207c45aae27c7ed3cb1d
         university_title_full = (
             "Universitat Politechnica de Catalunya Barcelonatech.FIB Facultat d'Informatica de Barcelona."
         )
@@ -63,10 +55,7 @@ class CataloniaSpider(scrapy.Spider):
                 'course_local_id': course_local_id.strip(),  # 2. Course_local_id - string
                 'course_title_full': course_title_full.strip(),  # 3. Course_title_full - string
                 'course_level': course_level.strip(),  # 4. Course_level - string
-<<<<<<< HEAD
                 'course_track': course_track.strip(),
-=======
->>>>>>> 1517fcca455d0ce84c5f207c45aae27c7ed3cb1d
                 'course_semester': course_semester,  # 5. Course_semester - string
                 'course_credits_type': course_credits_type,  # 7. Course_credits_type
                 'course_link_descrip': course_link_descrip,  # 8. Course_link_descrip - string
