@@ -3,7 +3,6 @@ from urllib.parse import urljoin
 from scrapy.utils.markup import remove_tags
 import re
 
-
 class CataloniaSpider(scrapy.Spider):
     name = "catalonia"
     start_urls = [
@@ -26,8 +25,7 @@ class CataloniaSpider(scrapy.Spider):
         present_link = response.request.url
         course_level = response.css('.breadcrumb')  # for  4. Course_level - string
         course_level = course_level.css('a')[3]
-        
-        course_level , course_track = remove_tags(course_level.extract()).split(' in ', maxsplit=1)
+        course_level , course_track = remove_tags(course_level.extract()).split(' in ', maxsplit = 1)
         course_level = re.sub(r"Degree"," ",remove_tags(course_level))
         table = response.css('.field-item.even tbody')  # for parse 2,3,4,5,8
         university_title_full = (
