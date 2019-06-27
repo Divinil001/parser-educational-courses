@@ -25,8 +25,6 @@ class CataloniaPipeline(object):
                 })
             except:
                 pass
-        # создадим словарь с нужным порядком ключей
-
 
         with open('dataset.json', 'w') as file: # save data to file
             json.dump(finished_courses, file)
